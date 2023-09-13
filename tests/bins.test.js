@@ -1,6 +1,6 @@
 const { Pool } = require("pg");
+const PgPersistence = require("../lib/pg-persistence");
 const config = require("../config");
-const { dbQuery } = require("../lib/db-query");
 
 const pool = new Pool({
   user: config.POSTGRES_USERNAME,
@@ -11,26 +11,29 @@ const pool = new Pool({
 });
 
 describe("Postgres Bins Table Connection", () => {
-  let client;
+  let pgPersistence;
+
   beforeAll(async () => {
-    client = await pool.connect();
+    pgPersistence = new PgPersistence();
+    await pgPersistence.createBin("asdasd");
   });
 
   afterAll(async () => {
-    if (client) await client.release();
-
     await pool.end();
   });
 
-  test("can connect to DB", async () => {
-    const CREATE_BIN = `INSERT INTO bins (bin_path) VALUES ($1)`;
-
+  test("can insert to Postgres DB", async () => {
     try {
-      const result = await dbQuery(CREATE_BIN, "asdasd");
-      expect(result.rowCount).toBe(1);
+      const binMade = await pgPersistence.createBin("asdasd");
+      expect(binMade).toBe(true);
     } catch (error) {
       console.error("Error:", error);
       throw error;
     }
+  });
+
+  test("can get all bins", async () => {
+    const returnedBins = await pgPersistence.getAllBins();
+    expect(returnedBins).not.toBe(0);
   });
 });
