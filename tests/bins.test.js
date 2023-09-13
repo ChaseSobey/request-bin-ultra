@@ -1,11 +1,6 @@
 const { Pool } = require("pg");
+const PgPersistence = require("../lib/pg-persistence");
 const config = require("../config");
-
-const logQuery = (statement, parameters) => {
-  let timeStamp = new Date();
-  let formattedTimeStamp = timeStamp.toString().substring(4, 24);
-  console.log(formattedTimeStamp, statement, parameters);
-};
 
 const pool = new Pool({
   user: config.POSTGRES_USERNAME,
@@ -15,32 +10,30 @@ const pool = new Pool({
   port: 5432,
 });
 
-async function dbQuery(statement, ...parameters) {
-  const client = await pool.connect();
-
-  try {
-    logQuery(statement, parameters);
-    const result = await client.query(statement, parameters);
-    return result;
-  } finally {
-    client.release();
-  }
-}
-
 describe("Postgres Bins Table Connection", () => {
-  beforeAll(() => {
-    return pool.connect();
+  let pgPersistence;
+
+  beforeAll(async () => {
+    pgPersistence = new PgPersistence();
+    await pgPersistence.createBin("asdasd");
   });
 
-  test("can connect to DB", async () => {
-    const CREATE_BIN = `INSERT INTO bins (bin_path) VALUES ($1)`;
+  afterAll(async () => {
+    await pool.end();
+  });
 
+  test("can insert to Postgres DB", async () => {
     try {
-      const result = await dbQuery(CREATE_BIN, "asdasd");
-      expect(result.rowCount).toBe(1);
+      const binMade = await pgPersistence.createBin("asdasd");
+      expect(binMade).toBe(true);
     } catch (error) {
       console.error("Error:", error);
       throw error;
     }
+  });
+
+  test("can get all bins", async () => {
+    const returnedBins = await pgPersistence.getAllBins();
+    expect(returnedBins).not.toBe(0);
   });
 });
