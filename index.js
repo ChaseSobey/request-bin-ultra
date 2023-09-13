@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const crypto = require('crypto')
 const mongo = require('./lib/mongodb-query');
+const PgPersistence = require('./lib/pg-persistence');
 const app = express();
 const port = config.PORT;
 const host = config.HOST;
@@ -13,6 +14,11 @@ app.use(morgan('common'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.locals.store = new PgPersistence();
+  next();
+});
 
 app.post('/', (req, res) => {
   console.log(req.rawHeaders)
@@ -28,14 +34,17 @@ app.post('/createBin', (req, res) => {
   let binPath = crypto.randomBytes(10).toString('hex');
   //e.g. binPath is a string - e.g. 40a65c27d6c4a79e
 
-  //TODO store pinPath into postgres
-  res.redirect(`/bin/${binPath}`)
+  let store = res.locals.store;
+  store.createBin(binPath);
+  res.redirect(`/bin/${binPath}`);
 });
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   //DB query to get all bins
   console.log(req);
-  let allBins = ['bin 1', 'bin 2', 'bin 3'];
+  
+  let store = res.locals.store;
+  let allBins = await store.getAllBins();
   res.render('homepage', {allBins})
 });
 
