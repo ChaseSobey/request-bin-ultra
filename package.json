@@ -4,7 +4,7 @@
   "description": "custom implementation of the functionality provided by requestBin",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "npx nodemon index.js"
   },
   "author": "",
