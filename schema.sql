@@ -11,8 +11,8 @@ CREATE TABLE bins (
 CREATE TABLE requests (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   bin_id UUID REFERENCES bins(id) NOT NULL,
-  mongo_id TEXT,
+  mongo_id TEXT NOT NULL,
   received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  http_method TEXT,
-  http_path TEXT
+  http_method TEXT NOT NULL,
+  http_path TEXT NOT NULL
 );
