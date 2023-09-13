@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+const config = require("../config");
 
 const logQuery = (statement, parameters) => {
   let timeStamp = new Date();
@@ -7,7 +8,11 @@ const logQuery = (statement, parameters) => {
 };
 
 const pool = new Pool({
-  database: "request-bin-ultra",
+  user: config.POSTGRES_USERNAME,
+  host: config.POSTGRES_HOST,
+  database: config.POSTGRES_DB,
+  password: config.POSTGRES_PASSWORD,
+  port: 5432,
 });
 
 async function dbQuery(statement, ...parameters) {
