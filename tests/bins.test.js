@@ -1,11 +1,6 @@
 const { Pool } = require("pg");
 const config = require("../config");
-
-const logQuery = (statement, parameters) => {
-  let timeStamp = new Date();
-  let formattedTimeStamp = timeStamp.toString().substring(4, 24);
-  console.log(formattedTimeStamp, statement, parameters);
-};
+const { dbQuery } = require("../lib/db-query");
 
 const pool = new Pool({
   user: config.POSTGRES_USERNAME,
@@ -15,21 +10,16 @@ const pool = new Pool({
   port: 5432,
 });
 
-async function dbQuery(statement, ...parameters) {
-  const client = await pool.connect();
-
-  try {
-    logQuery(statement, parameters);
-    const result = await client.query(statement, parameters);
-    return result;
-  } finally {
-    client.release();
-  }
-}
-
 describe("Postgres Bins Table Connection", () => {
-  beforeAll(() => {
-    return pool.connect();
+  let client;
+  beforeAll(async () => {
+    client = await pool.connect();
+  });
+
+  afterAll(async () => {
+    if (client) await client.release();
+
+    await pool.end();
   });
 
   test("can connect to DB", async () => {
