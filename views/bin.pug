@@ -1,0 +1,23 @@
+doctype html
+
+html(lang="en-US")
+
+  head
+    title RequestBin
+    meta(charset="UTF-8")
+    //- link(rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Sans")
+    //- link(rel="stylesheet" href="/stylesheets/application.css")
+
+    div
+      a(href=`/`) Home
+
+
+  body
+    header
+      h1= `Bin URL: http://www.some_domain.com/bin/${binId}`
+        
+    main 
+      ul
+        each request, index in allRequests 
+          //- a(href=`/bin/${bin_id}`)
+          li= request

@@ -1,0 +1,27 @@
+doctype html
+
+html(lang="en-US")
+
+  head
+    title RequestBin
+    meta(charset="UTF-8")
+    //- link(rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Sans")
+    //- link(rel="stylesheet" href="/stylesheets/application.css")
+
+  body
+    header
+      h1 All Bins
+      block headerLinks
+        form(action="/createBin" method="post")
+          fieldset.actions
+            button + Create a new bin
+        
+    main 
+      ul
+        each bin_id, index in allBins 
+          form(action="/delete" method="post")
+              fieldset.actions
+                button Delete Bin
+                a(href=`/bin/${bin_id}`)
+                  li= `http://www.some_domain.com/bin/${bin_id}`
+            
