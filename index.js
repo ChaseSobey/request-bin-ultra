@@ -68,18 +68,22 @@ app.get("/bin/:bin_path", async (req, res) => {
   let mongoIds = await store.getMongoIdsByBinPath(binPath);
   console.log("Mongoids is: ", mongoIds);
 
+
   const allRequests = await mongo.getObjectsById(
     "test",
     "requests_collection",
     mongoIds
   );
   res.render("bin", { binPath, allRequests, hostname });
+
 });
 
 //Route to store all http requests to a bin
 app.all("/bin/:bin_path", async (req, res) => {
   let store = res.locals.store;
-  console.log(req.rawHeaders);
+  // console.log("\n\n\n\n\n\n\nraw headers here: ", req.rawHeaders);
+  console.log("\n\n\n\n\n\n\nraw headers here: ", req.headers);
+
   console.log(req.method);
   console.log(req.url);
   console.log(req.body);
@@ -88,7 +92,22 @@ app.all("/bin/:bin_path", async (req, res) => {
   //insert req.body into mongo database
 
   //mongoid is string type
-  let mongoId = await mongo.insertOne("test", "requests_collection", req.body);
+
+  // let newRequest = {
+  //   header: req.headers,
+  //   body: req.body
+  // }
+  // Object.assign(req
+  let newRequest = { headers: req.headers, body: req.body };
+  let mongoId = await mongo.insertOne(
+    "test",
+    "requests_collection",
+    // req.body
+    newRequest
+  );
+
+
+
   console.log("mongoid is :", mongoId);
   await store.createRequest(binPath, mongoId, req.method, req.url);
   res.sendStatus(200);
