@@ -37,9 +37,9 @@ describe("Postgres Bins Table Connection", () => {
     await dbQuery(CREATE_BIN_WITH_UUID, binPath, uuid);
 
     // Insert requests into newly-created bin
-    await pgPersistence.createRequest(uuid, "abcd", "POST", "/abcd");
-    await pgPersistence.createRequest(uuid, "efgh", "POST", "/efgh");
-    await pgPersistence.createRequest(uuid, "lmno", "POST", "/lmno");
+    await pgPersistence.createRequest(binPath, "abcd", "POST", "/abcd");
+    await pgPersistence.createRequest(binPath, "efgh", "POST", "/efgh");
+    await pgPersistence.createRequest(binPath, "lmno", "POST", "/lmno");
   });
 
   afterAll(async () => {
@@ -49,7 +49,7 @@ describe("Postgres Bins Table Connection", () => {
   test("can create request", async () => {
     try {
       const requestMade = await pgPersistence.createRequest(
-        uuid,
+        binPath,
         "xzy",
         "POST",
         "/xyz"
