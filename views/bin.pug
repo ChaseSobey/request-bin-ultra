@@ -11,10 +11,14 @@ html(lang="en-US")
     div
       a(href=`/`) Home
 
-
   body
     header
       h1= `Bin URL: http://${hostname}/bin/${binPath}`
+    
+    block headerLinks
+      form(action=`/deleteReqs/bin/${binPath}` method="post")
+        fieldset.actions
+          button Delete all requests
         
     main 
       ul
