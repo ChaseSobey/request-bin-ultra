@@ -71,27 +71,8 @@ app.get("/bin/:bin_path", async (req, res) => {
   let mongoIds = await store.getMongoIdsByBinPath(binPath);
   console.log("Mongoids is: ", mongoIds);
 
-  //mongo query to get all requests with mongoIds
-  let mongoIdObjs = mongoIds.map((mongoId) =>
-    mongo.stringIdToMongoIdObject(mongoId.mongo_id)
-  );
-  console.log("mongoIdObjs: ", mongoIdObjs);
-
-  let mongoObjs = [];
-  mongoIdObjs.forEach((mongoId) =>
-    mongoObjs.push(
-      mongo.findDbObj("test", "requests_collection", { _id: mongoId })
-    )
-  );
-  Promise.all(mongoObjs)
-    .then((values) => {
-      console.log("values are: ", values);
-      return values;
-    })
-    .then((allRequests) => {
-      console.log("allRequests is :", allRequests);
-      res.render("bin", { binPath, allRequests, hostname });
-    });
+  const allRequests = await mongo.getObjectsById(mongoIds);
+  res.render("bin", { binPath, allRequests, hostname });
 });
 
 app.listen(port, host, () => {
