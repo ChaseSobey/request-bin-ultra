@@ -38,9 +38,28 @@ app.get("/", async (req, res) => {
   res.render("homepage", { allBins });
 });
 
+//Delete all requests in a bin
+app.post("/deleteReqs/bin/:bin_path", async (req, res) => {
+  let store = res.locals.store;
+  let binPath = req.params.bin_path
+  let stringIds = await store.getMongoIdsByBinPath(binPath);
+  await mongo.deleteObjects("test", "requests_collection", stringIds);
+  await store.clearBin(binPath);
+  res.redirect(`/bin/${binPath}`);
+});
+
+//Delete a bin and all requests
+app.post("/deleteBin/bin/:bin_path", async (req, res) => {
+  let store = res.locals.store;
+  let binPath = req.params.bin_path
+  let stringIds = await store.getMongoIdsByBinPath(binPath);
+  await mongo.deleteObjects("test", "requests_collection", stringIds);
+  await store.deleteBin(binPath);
+  res.redirect("/");
+})
+
 //Route to get all requests to a bin
 app.get("/bin/:bin_path", async (req, res) => {
-  console.log("route hit");
   const hostname = req.get("host");
   let store = res.locals.store;
   const binPath = req.params.bin_path;
@@ -49,7 +68,7 @@ app.get("/bin/:bin_path", async (req, res) => {
   let mongoIds = await store.getMongoIdsByBinPath(binPath);
   console.log("Mongoids is: ", mongoIds);
 
-  const allRequests = await mongo.getObjectsById(mongoIds);
+  const allRequests = await mongo.getObjectsById("test", "requests_collection", mongoIds);
   res.render("bin", { binPath, allRequests, hostname });
 });
 
@@ -66,8 +85,8 @@ app.all("/bin/:bin_path", async (req, res) => {
 
   //mongoid is string type
   let mongoId = await mongo.insertOne(
-    "request-bin-ultra",
-    "requests",
+    "test",
+    "requests_collection",
     req.body
   );
   console.log("mongoid is :", mongoId);

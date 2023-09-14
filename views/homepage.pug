@@ -19,7 +19,7 @@ html(lang="en-US")
     main 
       ul
         each bin, index in allBins 
-          form(action="/delete" method="post")
+          form(action=`/deleteBin/bin/${bin.bin_path}` method="post")
               fieldset.actions
                 button Delete Bin
                 a(href=`/bin/${bin.bin_path}`)
