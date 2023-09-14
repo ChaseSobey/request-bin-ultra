@@ -58,4 +58,9 @@ describe("Postgres Bins Table Connection", () => {
       throw error;
     }
   });
+
+  test("can get requests by bin id", async () => {
+    const mongoIds = await pgPersistence.getMongoIdsByBinId(uuid);
+    expect(mongoIds.length).not.toBe(0);
+  });
 });
