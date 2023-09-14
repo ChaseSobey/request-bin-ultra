@@ -34,17 +34,17 @@ app.all('/bin/req/:bin_path', async (req, res) => {
   //mongoid is string type
   let mongoId = await mongo.insertOne('test', 'requests_collection', req.body); 
   console.log('mongoid is :', mongoId);
-  store.createRequest(binPath, mongoId, req.method, req.url);
+  await store.createRequest(binPath, mongoId, req.method, req.url);
   res.sendStatus(200);
 });
 
 //Route to create new bin
-app.post('/createBin', (req, res) => {
+app.post('/createBin', async (req, res) => {
   let binPath = crypto.randomBytes(10).toString('hex');
   //e.g. binPath is a string - e.g. 40a65c27d6c4a79e
 
   let store = res.locals.store;
-  store.createBin(binPath);
+  await store.createBin(binPath);
   res.redirect(`/bin/${binPath}`);
 });
 
@@ -67,19 +67,18 @@ app.get('/bin/:bin_path', async (req, res) => {
   console.log('Mongoids is: ', mongoIds);
   
   //mongo query to get all requests with mongoIds
-  let mongoIdObjs = mongoIds.map((mongoId) => mongo.stringIdToMongoIdObject(mongoId));
+  let mongoIdObjs = mongoIds.map((mongoId) => mongo.stringIdToMongoIdObject(mongoId.mongo_id));
   console.log('mongoIdObjs: ', mongoIdObjs);
   
   let mongoObjs = [];
   mongoIdObjs.forEach(mongoId => mongoObjs.push(mongo.findDbObj('test', 'requests_collection', { _id : mongoId })));
-  let allRequests = Promise.all(mongoObjs).then((values) => {
-    console.log(values);
+  Promise.all(mongoObjs).then((values) => {
+    console.log('values are: ', values);
+    return values
+  }).then((allRequests) => {
+    console.log('allRequests is :', allRequests);
+    res.render('bin', {binPath, allRequests})
   })
-  // let allRequests = mongo.findDbObj('test', 'requests_collection', { _id : mongoId });
-
-  // let allRequests = ['request 1', 'request 2', 'request 3'];
-
-  res.render('bin', {binPath, allRequests})
 });
 
 app.listen(port, host, () => {
