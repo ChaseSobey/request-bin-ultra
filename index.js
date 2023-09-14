@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 });
 
 //Route to store all http requests to a bin
-app.all("/bin/req/:bin_path", async (req, res) => {
+app.all("/bin/:bin_path/reqs", async (req, res) => {
   let store = res.locals.store;
   console.log(req.rawHeaders);
   console.log(req.method);
