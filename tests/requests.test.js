@@ -70,4 +70,10 @@ describe("Postgres Bins Table Connection", () => {
     const mongoIds = await pgPersistence.getMongoIdsByBinPath(binPath);
     expect(mongoIds.length).not.toBe(0);
   });
+
+  test("can clear requests by bin path", async () => {
+    await pgPersistence.clearBin(binPath);
+    const mongoIds = await pgPersistence.getMongoIdsByBinPath(binPath);
+    expect(mongoIds.length).toBe(0);
+  });
 });

@@ -23,16 +23,22 @@ function uuidv4() {
 describe("Postgres Bins Table Connection", () => {
   let pgPersistence;
   let uuid;
+  const binPath = Math.random().toString(36).slice(2);
 
   beforeAll(async () => {
     pgPersistence = new PgPersistence();
     uuid = uuidv4();
 
-    // Insert new bin with path "my_bin_path" and random uuid
-    const CREATE_BIN_WITH_UUID = `INSERT INTO bins (bin_path, id) VALUES ($1, $2)`;
+    // Insert new bin with path random path and random uuid
 
-    let result = await dbQuery(CREATE_BIN_WITH_UUID, "my_bin_path", uuid);
-    return result.rowCount > 0;
+    const CREATE_BIN_WITH_UUID = `INSERT INTO bins (bin_path, id) VALUES ($1, $2)`;
+    // let result = await dbQuery(CREATE_BIN_WITH_UUID, "my_bin_path", uuid);
+    await dbQuery(CREATE_BIN_WITH_UUID, binPath, uuid);
+
+    // Insert requests into newly-created bin
+    await pgPersistence.createRequest(binPath, "abcd", "POST", "/abcd");
+    await pgPersistence.createRequest(binPath, "efgh", "POST", "/efgh");
+    await pgPersistence.createRequest(binPath, "lmno", "POST", "/lmno");
   });
 
   afterAll(async () => {
@@ -55,7 +61,7 @@ describe("Postgres Bins Table Connection", () => {
   });
 
   test("can delete bin", async () => {
-    const deletedBin = await pgPersistence.deleteBin(uuid);
+    const deletedBin = await pgPersistence.deleteBin(binPath);
     expect(deletedBin).toBe(true);
   });
 });
