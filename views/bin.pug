@@ -20,4 +20,5 @@ html(lang="en-US")
       ul
         each request, index in allRequests 
           //- a(href=`/bin/${bin_id}`)
-          li= request
+          //- li= JSON.stringify(request)
+          li= `${request.id} - ${request.kind}`
