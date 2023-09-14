@@ -23,16 +23,18 @@ function uuidv4() {
 describe("Postgres Bins Table Connection", () => {
   let pgPersistence;
   let uuid;
+  // make random bin path
+  const binPath = Math.random().toString(36).slice(2);
 
   beforeAll(async () => {
     pgPersistence = new PgPersistence();
     uuid = uuidv4();
 
-    // Insert new bin with path "my_bin_path" and random uuid
+    // Insert new bin with path random path and random uuid
 
     const CREATE_BIN_WITH_UUID = `INSERT INTO bins (bin_path, id) VALUES ($1, $2)`;
     // let result = await dbQuery(CREATE_BIN_WITH_UUID, "my_bin_path", uuid);
-    await dbQuery(CREATE_BIN_WITH_UUID, "my_bin_path", uuid);
+    await dbQuery(CREATE_BIN_WITH_UUID, binPath, uuid);
 
     // Insert requests into newly-created bin
     await pgPersistence.createRequest(uuid, "abcd", "POST", "/abcd");
@@ -61,6 +63,11 @@ describe("Postgres Bins Table Connection", () => {
 
   test("can get requests by bin id", async () => {
     const mongoIds = await pgPersistence.getMongoIdsByBinId(uuid);
+    expect(mongoIds.length).not.toBe(0);
+  });
+
+  test("can get requests by bin path", async () => {
+    const mongoIds = await pgPersistence.getMongoIdsByBinPath(binPath);
     expect(mongoIds.length).not.toBe(0);
   });
 });
