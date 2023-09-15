@@ -29,10 +29,10 @@ html(lang="en-US")
                 li= request.method
                 h2= "HEADERS"
                 each key, index in Object.keys(request.headers)
-                  pre= `${key} : ${request.headers[key]}`
+                  pre= `${key}: ${request.headers[key]}`
                 h2= "BODY"
                   p= "\n"
-                  code= JSON.stringify(request.body)
+                  pre= JSON.stringify(request.body).replaceAll(",", ",\n")
         else 
             fieldset.actions
                 li= allRequests.url 
@@ -42,5 +42,5 @@ html(lang="en-US")
                   pre= `${key} : ${allRequests.headers[key]}`
                 h2= "BODY"
                   p= "\n"
-                  code= JSON.stringify(allRequests.body)
+                  pre= JSON.stringify(allRequests.body).replaceAll(",", ",\n")
 
