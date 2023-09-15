@@ -69,13 +69,13 @@ app.get("/bin/:bin_path", async (req, res) => {
 
   //postgres query for mongo ids that have corresponding binPath
   let mongoIds = await store.getMongoIdsByBinPath(binPath);
-  console.log("Mongoids is: ", mongoIds);
 
   const allRequests = await mongo.getObjectsById(
     "test",
     "requests_collection",
     mongoIds
   );
+
   res.render("bin", { binPath, allRequests, hostname });
 });
 
@@ -83,14 +83,15 @@ app.get("/bin/:bin_path", async (req, res) => {
 app.all("/bin/:bin_path", async (req, res) => {
   let store = res.locals.store;
   let binPath = req.params.bin_path;
-  let { headers, body, url, method } = { req };
+  let { body, url, method } = { ...req };
 
   let newRequest = {
-    headers,
+    headers: req.headers,
     body,
     url,
     method,
   };
+
   let mongoId = await mongo.insertOne(
     "test",
     "requests_collection",
