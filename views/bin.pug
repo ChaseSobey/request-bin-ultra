@@ -22,7 +22,7 @@ html(lang="en-US")
         
     main 
       ul
-        if allRequests.length > 0
+        if Array.isArray(allRequests)
           each request, index in allRequests 
             //- a(href=`/bin/${bin_id}`)
             //- li= JSON.stringify(request)
@@ -36,3 +36,15 @@ html(lang="en-US")
                 h2= "BODY"
                   p= "\n"
                   code= JSON.stringify(request.body)
+        else 
+            fieldset.actions
+                li= allRequests.url 
+                li= allRequests.method
+                //- let keys = Object.keys(allRequests.headers)
+                h2= "HEADERS"
+                each key, index in Object.keys(allRequests.headers)
+                  pre= `${key} : ${allRequests.headers[key]}`
+                h2= "BODY"
+                  p= "\n"
+                  code= JSON.stringify(allRequests.body)
+

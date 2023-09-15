@@ -69,6 +69,9 @@ app.get("/bin/:bin_path", async (req, res) => {
   console.log("Mongoids is: ", mongoIds);
 
   const allRequests = await mongo.getObjectsById("test", "requests_collection", mongoIds);
+  // if (!Array.isArray(allRequests)) {
+    // allRequests = [...allRequests]
+  // }
   res.render("bin", { binPath, allRequests, hostname });
   // res.json(allRequests);
 });
