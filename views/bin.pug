@@ -24,12 +24,9 @@ html(lang="en-US")
       ul
         if allRequests.length > 0
           each request, index in allRequests 
-            //- a(href=`/bin/${bin_id}`)
-            //- li= JSON.stringify(request)
             fieldset.actions
                 li= request.url 
                 li= request.method
-                //- let keys = Object.keys(request.headers)
                 h2= "HEADERS"
                 each key, index in Object.keys(request.headers)
                   pre= `${key} : ${request.headers[key]}`
