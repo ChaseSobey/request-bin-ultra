@@ -24,27 +24,23 @@ html(lang="en-US")
       ul
         if Array.isArray(allRequests)
           each request, index in allRequests 
-            //- a(href=`/bin/${bin_id}`)
-            //- li= JSON.stringify(request)
             fieldset.actions
                 li= request.url 
                 li= request.method
-                //- let keys = Object.keys(request.headers)
                 h2= "HEADERS"
                 each key, index in Object.keys(request.headers)
-                  pre= `${key} : ${request.headers[key]}`
+                  pre= `${key}: ${request.headers[key]}`
                 h2= "BODY"
                   p= "\n"
-                  code= JSON.stringify(request.body)
+                  pre= JSON.stringify(request.body).replaceAll(",", ",\n")
         else 
             fieldset.actions
                 li= allRequests.url 
                 li= allRequests.method
-                //- let keys = Object.keys(allRequests.headers)
                 h2= "HEADERS"
                 each key, index in Object.keys(allRequests.headers)
                   pre= `${key} : ${allRequests.headers[key]}`
                 h2= "BODY"
                   p= "\n"
-                  code= JSON.stringify(allRequests.body)
+                  pre= JSON.stringify(allRequests.body).replaceAll(",", ",\n")
 
